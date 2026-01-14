@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Network Unity</title>
+
+<link rel="icon" type="image/png" href="logo.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nova+Cut&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  background:#000;
+  color:#fff;
+  height:100vh;
+  overflow:hidden;
+  font-family:"Nova Cut",system-ui,sans-serif;
+}
+
+canvas{
+  position:fixed;
+  inset:0;
+  z-index:0;
+}
+
+.page{
+  position:relative;
+  z-index:1;
+  min-height:100vh;
+  padding:100px 8vw 140px;
+}
+
+.page-title{
+  font-size:2.4rem;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  text-align:center;
+  margin-bottom:50px;
+  opacity:0;
+  animation:popIn .8s ease forwards;
+}
+
+.games-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:32px;
+}
+
+.game-card{
+  position:relative;
+  height:160px;
+  border-radius:20px;
+  overflow:hidden;
+  cursor:pointer;
+
+  opacity:0;
+  transform:scale(.85) translateY(20px);
+  animation:cardPop .6s cubic-bezier(.25,.9,.25,1) forwards;
+}
+
+.game-card:nth-child(1){animation-delay:.35s}
+.game-card:nth-child(2){animation-delay:.5s}
+.game-card:nth-child(3){animation-delay:.65s}
+.game-card:nth-child(4){animation-delay:.8s}
+
+.game-card img{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  transition:.4s ease;
+}
+
+.game-overlay{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(
+    to top,
+    rgba(0,0,0,.75),
+    rgba(0,0,0,.25),
+    rgba(0,0,0,.05)
+  );
+  display:flex;
+  align-items:flex-end;
+  padding:18px;
+  transition:.4s ease;
+}
+
+.game-title{
+  font-size:.95rem;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  opacity:.9;
+}
+
+.game-card:hover img{
+  transform:scale(1.12);
+}
+
+.game-card:hover{
+  box-shadow:
+    0 0 30px rgba(255,255,255,.35),
+    0 0 60px rgba(255,255,255,.15);
+}
+
+#player{
+  position:fixed;
+  inset:0;
+  z-index:5;
+  background:#000;
+  display:none;
+}
+
+#gameFrame{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  border:none;
+}
+
+.player-controls{
+  position:fixed;
+  top:18px;
+  right:18px;
+  z-index:7;
+  display:none;
+  gap:12px;
+}
+
+.player-controls button{
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.2);
+  color:white;
+  padding:8px 14px;
+  border-radius:12px;
+  font-size:.7rem;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  cursor:pointer;
+  backdrop-filter:blur(10px);
+}
+
+.player-controls button:hover{
+  background:rgba(255,255,255,.2);
+}
+
+.nav{
+  position:fixed;
+  bottom:26px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:10;
+  display:flex;
+  gap:20px;
+  padding:14px 22px;
+  background:rgba(255,255,255,.08);
+  backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:26px;
+}
+
+.nav a{
+  width:46px;
+  height:46px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:.25s ease;
+}
+
+.nav a:hover{
+  transform:translateY(-6px) scale(1.1);
+  box-shadow:0 0 18px rgba(255,255,255,.25);
+}
+
+.nav svg{
+  width:22px;
+  height:22px;
+  fill:#fff;
+}
+
+.nav .active{
+  box-shadow:0 0 20px rgba(255,255,255,.4);
+}
+
+@keyframes popIn{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes cardPop{
+  to{opacity:1;transform:scale(1) translateY(0)}
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="particles"></canvas>
+
+<div class="page">
+  <div class="page-title">Games</div>
+
+  <div class="games-grid">
+
+    <div class="game-card" onclick="openGame('Slope.html')">
+      <img src="Slope.png" alt="Slope">
+      <div class="game-overlay">
+        <div class="game-title">Slope</div>
+      </div>
+    </div>
+
+    <div class="game-card" onclick="openGame('escape.html')">
+      <img src="escape.png" alt="Escape road">
+      <div class="game-overlay">
+        <div class="game-title">Escape Road</div>
+      </div>
+    </div>
+
+    <div class="game-card" onclick="openGame('doge.html')">
+      <img src="doge.png" alt="Doge miner">
+      <div class="game-overlay">
+        <div class="game-title">Doge miner</div>
+      </div>
+    </div>
+
+    <div class="game-card" onclick="openGame('coreball.html')">
+      <img src="coreball.png" alt="Coreball">
+      <div class="game-overlay">
+        <div class="game-title">Coreball</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- GAME PLAYER -->
+<div id="player">
+  <iframe id="gameFrame"></iframe>
+</div>
+
+<!-- PLAYER CONTROLS -->
+<div class="player-controls" id="playerControls">
+  <button onclick="toggleFullscreen()">Fullscreen</button>
+  <button onclick="closeGame()">Close</button>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+
+  <a href="index.html" title="Home">
+    <svg viewBox="0 0 24 24"><path d="M12 3l9 8h-3v9h-12v-9h-3z"/></svg>
+  </a>
+
+  <a href="g.html" title="Games" class="active">
+    <svg viewBox="0 0 24 24">
+      <path d="M7 10h10a4 4 0 0 1 4 4v2a3 3 0 0 1-3 3h-1l-2-2h-6l-2 2h-1a3 3 0 0 1-3-3v-2a4 4 0 0 1 4-4z"/>
+      <rect x="8" y="12" width="2" height="2"/>
+      <rect x="6" y="14" width="2" height="2"/>
+      <circle cx="15.5" cy="13.5" r="1"/>
+      <circle cx="17.5" cy="15.5" r="1"/>
+    </svg>
+  </a>
+
+  <a href="ai.html" title="AI">
+    <svg viewBox="0 0 24 24">
+      <path d="M9 2v2H7a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3h-2V2h-2v2h-2V2z"/>
+      <circle cx="9" cy="11" r="1.2"/>
+      <circle cx="15" cy="11" r="1.2"/>
+      <path d="M9 15h6"/>
+    </svg>
+  </a>
+
+  <a href="settings.html" title="Settings">
+    <svg viewBox="0 0 24 24">
+      <path d="M12 8a4 4 0 1 0 0 8z"/>
+      <path d="M2 12h2m16 0h2M12 2v2m0 16v2"/>
+    </svg>
+  </a>
+
+</nav>
+
+<script>
+/* PARTICLES */
+const c=document.getElementById("particles"),x=c.getContext("2d");
+let w,h;
+function resize(){w=c.width=innerWidth;h=c.height=innerHeight}
+addEventListener("resize",resize);resize();
+
+const p=[...Array(70)].map(()=>({
+  x:Math.random()*w,
+  y:Math.random()*h,
+  r:Math.random()*1.4+.4,
+  vx:(Math.random()-.5)*.25,
+  vy:(Math.random()-.5)*.25
+}));
+
+(function animate(){
+  x.clearRect(0,0,w,h);
+  x.fillStyle="rgba(255,255,255,.85)";
+  p.forEach(e=>{
+    e.x+=e.vx;
+    e.y+=e.vy;
+    if(e.x<0||e.x>w)e.vx*=-1;
+    if(e.y<0||e.y>h)e.vy*=-1;
+    x.beginPath();
+    x.arc(e.x,e.y,e.r,0,Math.PI*2);
+    x.fill();
+  });
+  requestAnimationFrame(animate);
+})();
+
+/* GAME PLAYER */
+const player=document.getElementById("player");
+const frame=document.getElementById("gameFrame");
+const controls=document.getElementById("playerControls");
+
+function openGame(url){
+  frame.src=url;
+  player.style.display="block";
+  controls.style.display="flex";
+}
+
+function closeGame(){
+  frame.src="";
+  player.style.display="none";
+  controls.style.display="none";
+  if(document.fullscreenElement) document.exitFullscreen();
+}
+
+function toggleFullscreen(){
+  if(!document.fullscreenElement){
+    frame.requestFullscreen();
+  }else{
+    document.exitFullscreen();
+  }
+}
+</script>
+
+</body>
+</html>
